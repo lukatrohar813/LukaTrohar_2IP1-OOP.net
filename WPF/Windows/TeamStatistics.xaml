@@ -1,0 +1,122 @@
+﻿<Window x:Class="WPF.Windows.TeamStatistics"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:properties="clr-namespace:WPF.Properties"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="{x:Static properties:Resources.TeamStatisticsInformationTittle}" Height="450" Width="800"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <Window.Resources>
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="Margin" Value="50 0 0 0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="18" />
+        </Style>
+        <Style x:Key="GridCellBorderStyle" TargetType="Border">
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+    </Window.Resources>
+
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation 
+                        Duration="0:0:.5" 
+                        Storyboard.TargetProperty="Left" 
+                        From="1920" To="50" 
+                        AccelerationRatio=".1"/>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
+
+    <Grid>
+        <!--Columns and rows definition-->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"  />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" Grid.Column="0" BorderBrush="Black" BorderThickness="1"></Border>
+        <Border Grid.Row="0" Grid.Column="1" BorderBrush="Black" BorderThickness="1"></Border>
+        <Border Grid.Row="1" Grid.Column="0" BorderBrush="Black" BorderThickness="1"></Border>
+        <Border Grid.Row="1" Grid.Column="1" BorderBrush="Black" BorderThickness="1"></Border>
+        <Border Grid.Row="2" Grid.Column="0" BorderBrush="Black" BorderThickness="1"></Border>
+        <Border Grid.Row="2" Grid.Column="1" BorderBrush="Black" BorderThickness="1"></Border>
+        <Border Grid.Row="3" Grid.Column="0" BorderBrush="Black" BorderThickness="1"></Border>
+        <Border Grid.Row="3" Grid.Column="1" BorderBrush="Black" BorderThickness="1"></Border>
+
+        <TextBlock 
+            x:Name="TxtName"
+            Grid.Row="0"
+            Grid.Column="0">
+            <Run Text="{x:Static properties:Resources.TeamName}" />
+            <Run Text="{Binding TeamName}" />
+        </TextBlock>
+
+        <TextBlock 
+            x:Name="TxtFifaCode"
+            Grid.Row="0"
+            Grid.Column="1">
+            <Run Text="{x:Static properties:Resources.FifaCode}" />
+            <Run Text="{Binding FifaCode}" />
+        </TextBlock>
+
+        <TextBlock 
+            x:Name="TxtMatchesPlayed"
+            Grid.Row="1"
+            Grid.Column="0">
+            <Run Text="{x:Static properties:Resources.MatchesPlayed}" />
+            <Run Text="{Binding MatchesPlayed}" />
+        </TextBlock>
+
+        <TextBlock 
+            x:Name="TxtMatchesWon"
+            Grid.Row="1"
+            Grid.Column="1">
+            <Run Text="{x:Static properties:Resources.MatchesWOn}" />
+            <Run Text="{Binding MatchesWon}" />
+        </TextBlock>
+
+        <TextBlock 
+            x:Name="TxtMatchesLost"
+            Grid.Row="2"
+            Grid.Column="0">
+            <Run Text="{x:Static properties:Resources.MatchesLost}" />
+            <Run Text="{Binding MatchesLost}" />
+        </TextBlock>
+
+        <TextBlock 
+            x:Name="TxtMatchesDraw"
+            Grid.Row="2"
+            Grid.Column="1">
+            <Run Text="{x:Static properties:Resources.MatchesDraw}" />
+            <Run Text="{Binding MatchesDraw}" />
+        </TextBlock>
+
+        <TextBlock 
+            x:Name="TxtGoalsScored"
+            Grid.Row="3"
+            Grid.Column="0">
+            <Run Text="{x:Static properties:Resources.GoalsScored}" />
+            <Run Text="{Binding GoalsScored}" />
+        </TextBlock>
+
+        <TextBlock 
+            x:Name="TxtGoalsReceived"
+            Grid.Row="3"
+            Grid.Column="1">
+            <Run Text="{x:Static properties:Resources.GoalsReceived}" />
+            <Run Text="{Binding GoalsReceived}" />
+        </TextBlock>
+    </Grid>
+</Window>

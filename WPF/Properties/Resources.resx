@@ -1,0 +1,275 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="mainFormTitle" xml:space="preserve">
+    <value>Football match</value>
+  </data>
+  <data name="tournamentType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="genderSelectMale" xml:space="preserve">
+    <value>Male</value>
+  </data>
+  <data name="genderSelectFemale" xml:space="preserve">
+    <value>Female</value>
+  </data>
+  <data name="language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="languageSelectEnglish" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="languageSelectCroatian" xml:space="preserve">
+    <value>Croatian</value>
+  </data>
+  <data name="appSize" xml:space="preserve">
+    <value>Application Size</value>
+  </data>
+  <data name="appSizeSmall" xml:space="preserve">
+    <value>Small</value>
+  </data>
+  <data name="appSizeMedium" xml:space="preserve">
+    <value>Medium</value>
+  </data>
+  <data name="appSizeFullScreen" xml:space="preserve">
+    <value>Full Screen</value>
+  </data>
+  <data name="settingsTittle" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="btnSettingsSave" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="btnSaveSettings" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="settingsMsgBoxCaption" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="settingsMsgBoxText" xml:space="preserve">
+    <value>Proceed with choosen settings ?</value>
+  </data>
+  <data name="btnHomeTeamInformation" xml:space="preserve">
+    <value>statistics</value>
+  </data>
+  <data name="btnAwayTeamInformation" xml:space="preserve">
+    <value>statistics</value>
+  </data>
+  <data name="_playerName" xml:space="preserve">
+    <value>Player Name: </value>
+  </data>
+  <data name="_playerShirtNumber" xml:space="preserve">
+    <value>Shirt Number: </value>
+  </data>
+  <data name="_playerPoisition" xml:space="preserve">
+    <value>Position: </value>
+  </data>
+  <data name="_Captian" xml:space="preserve">
+    <value>Team Captain</value>
+  </data>
+  <data name="_goalsScored" xml:space="preserve">
+    <value>Goals Scored: </value>
+  </data>
+  <data name="_YellowCards" xml:space="preserve">
+    <value>Yellow Cards received:</value>
+  </data>
+  <data name="TeamStatisticsInformationTittle" xml:space="preserve">
+    <value>Team Statistics</value>
+  </data>
+  <data name="TeamName" xml:space="preserve">
+    <value>Team Name:</value>
+  </data>
+  <data name="FifaCode" xml:space="preserve">
+    <value>Fifa Code:</value>
+  </data>
+  <data name="MatchesPlayed" xml:space="preserve">
+    <value>Matches Played:</value>
+  </data>
+  <data name="MatchesWOn" xml:space="preserve">
+    <value>Matches Won:</value>
+  </data>
+  <data name="MatchesLost" xml:space="preserve">
+    <value>Matches Lost:</value>
+  </data>
+  <data name="MatchesDraw" xml:space="preserve">
+    <value>Matches ended in a draw:</value>
+  </data>
+  <data name="GoalsScored" xml:space="preserve">
+    <value>Goals Scored:</value>
+  </data>
+  <data name="GoalsReceived" xml:space="preserve">
+    <value>Goals Received:</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Football_Pitch" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Football_Pitch.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="placeholder_img" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\placeholder_img.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PlayerInformationTittle" xml:space="preserve">
+    <value>Player information</value>
+  </data>
+  <data name="Football_Field" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Football_Field.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="mainFormClosingBody" xml:space="preserve">
+    <value>Are you sure ?</value>
+  </data>
+  <data name="mainFormClosingTitle" xml:space="preserve">
+    <value>Main Form Closing</value>
+  </data>
+  <data name="settingsClosingBody" xml:space="preserve">
+    <value>Pressing OK will close the settings.
+Warning: Chosen settings will not save this way.</value>
+  </data>
+  <data name="settingsClosingTitle" xml:space="preserve">
+    <value>Settings closing</value>
+  </data>
+  <data name="SettingsOpeningBody" xml:space="preserve">
+    <value>Pressing okay will close the current application and open settings.</value>
+  </data>
+  <data name="SettingsOpeningTitle" xml:space="preserve">
+    <value>Settings opening</value>
+  </data>
+  <data name="WinFormsOpeningBody" xml:space="preserve">
+    <value>Pressing OK will open WinForms application and close the current one.</value>
+  </data>
+  <data name="WinFormsOpeningTitle" xml:space="preserve">
+    <value>WinForms Application Opening</value>
+  </data>
+  <data name="appSizeLarge" xml:space="preserve">
+    <value>Large</value>
+  </data>
+  <data name="_NotCaptian" xml:space="preserve">
+    <value>Not a team captain</value>
+  </data>
+  <data name="selectAwayTeam" xml:space="preserve">
+    <value>Please select an Away Team</value>
+  </data>
+  <data name="selectHomeTeam" xml:space="preserve">
+    <value>Please select a Home Team</value>
+  </data>
+  <data name="SelectOpponent" xml:space="preserve">
+    <value>Please choose an away team</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error Fetching Data</value>
+  </data>
+</root>

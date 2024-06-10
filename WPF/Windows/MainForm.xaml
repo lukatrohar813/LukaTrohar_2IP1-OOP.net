@@ -1,0 +1,99 @@
+﻿<Window x:Class="WPF.Windows.MainForm"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        xmlns:properties="clr-namespace:WPF.Properties" 
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
+        Title="{x:Static properties:Resources.mainFormTitle}" 
+        Loaded="MainForm_OnLoaded"
+        Closing="MainForm_OnClosing"
+        Height="450" 
+        Width="800">
+    <Window.Resources>
+        <Style TargetType="{x:Type WrapPanel}">
+            <Setter Property="Orientation" Value="Vertical" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Margin" Value="0 15 0 0" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+        </Style>
+
+        <Style x:Key="ComboBoxStyle" TargetType="{x:Type Panel}">
+            <Setter Property="Margin" Value="20 0 20 0" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <!--Columns and rows definition-->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="8" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Label x:Name="LblResultHomeTeam" Content="" HorizontalAlignment="Center" Margin="20,0" />
+            <Label x:Name="LblResultAwayTeam" Content="" HorizontalAlignment="Center" Margin="20,0" />
+            <Label x:Name="LblResult_Result" Content="" HorizontalAlignment="Center" Margin="20,0" />
+        </StackPanel>
+        <!--Menu item-->
+        <DockPanel Grid.Row="0" Grid.ColumnSpan="8" LastChildFill="True">
+            <Menu DockPanel.Dock="Top" Margin="0 0 45 0" HorizontalAlignment="Left">
+                <MenuItem Header="{x:Static properties:Resources.settingsTittle}" Click="Settings_OnClick" FontSize="12" FontWeight="Bold" HorizontalAlignment="Stretch"/>
+                <MenuItem Header="WinForms" Click="WinForms_OnClick" FontSize="12" FontWeight="Bold" HorizontalAlignment="Right" />
+            </Menu>
+        </DockPanel>
+
+        <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="8" Panel.ZIndex="1">
+        </StackPanel>
+
+        <!--Home team -->
+        <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" Margin="0, 0, 0, 1" Style="{StaticResource ComboBoxStyle}">
+            <Button x:Name="BtnHomeTeamInformation" Visibility="Hidden"  Click="BtnHomeTeamInformation_OnClick" Margin="0 0 0 1" HorizontalAlignment="Left"/>
+            <ComboBox x:Name="CbHomeTeam"  SelectionChanged="CbHomeTeam_OnSelectionChanged"/>
+        </StackPanel>
+
+        <!--Away team -->
+        <StackPanel Grid.Row="1" Grid.Column="4" Grid.ColumnSpan="4" Margin="0, 0, 0, 1" Style="{StaticResource ComboBoxStyle}">
+            <Button x:Name="BtnAwayTeamInformation" Visibility="Hidden" Click="BtnAwayTeamInformation_OnClick" Margin="0 0 0 1" HorizontalAlignment="Right"/>
+            <ComboBox x:Name="CbAwayTeam"  SelectionChanged="CbAwayTeam_OnSelectionChanged"/>
+        </StackPanel>
+
+        <!--Form background image-->
+        <StackPanel x:Name="PnlBackgroundImage" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="8">
+            <StackPanel.Background>
+                <ImageBrush>
+                    <ImageBrush.ImageSource>
+                        <BitmapImage UriSource="..\Resources\Football_Field.jpg"/>
+                    </ImageBrush.ImageSource>
+                </ImageBrush>
+            </StackPanel.Background>
+        </StackPanel>
+
+        <!--=========== HOME TEAM STARTING ELEVEN =========== -->
+        <WrapPanel x:Name="PnlHomeTeamGoalie" Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center" />
+        <WrapPanel x:Name="PnlHomeTeamDefender" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center"/>
+        <WrapPanel x:Name="PnlHomeTeamMidfield" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Center"/>
+        <WrapPanel x:Name="PnlHomeTeamForward" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Center"/>
+
+        <!--=========== AWAY TEAM STARTING ELEVEN =========== -->
+        <WrapPanel x:Name="PnlAwayTeamGoalie" Grid.Row="2" Grid.Column="7" HorizontalAlignment="Center"/>
+        <WrapPanel x:Name="PnlAwayTeamDefender" Grid.Row="2" Grid.Column="6" HorizontalAlignment="Center"/>
+        <WrapPanel x:Name="PnlAwayTeamMidfield" Grid.Row="2" Grid.Column="5" HorizontalAlignment="Center"/>
+        <WrapPanel x:Name="PnlAwayTeamForward" Grid.Row="2" Grid.Column="4" HorizontalAlignment="Center"/>
+    </Grid>
+</Window>

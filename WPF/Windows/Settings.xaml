@@ -1,0 +1,125 @@
+﻿<Window x:Class="WPF.Windows.Settings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:properties="clr-namespace:WPF.Properties"
+        Closing="Settings_OnClosing"
+        mc:Ignorable="d"
+        d:DesignHeight="450" d:DesignWidth="800"
+        Title="{x:Static properties:Resources.settingsTittle}" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <GroupBox
+            Grid.Column="0" 
+            Grid.Row="0" 
+            x:Name="GbTournamentType"
+            Header="{x:Static properties:Resources.tournamentType}"
+            Margin="10">
+            <GroupBox.Content>
+                <StackPanel
+                    x:Name="PnlTournamentType"
+                    Margin="0 15 0 0">
+                    <CheckBox
+                        Name="ChkMale"
+                        Margin="5"
+                        Tag="male"
+                        Content="{x:Static properties:Resources.genderSelectMale}"
+                        Checked="TournamentTypeCheckBox_Checked" />
+                    <CheckBox 
+                        Name="ChkFemale"
+                        Margin="5"
+                        Tag="female"
+                        Content="{x:Static properties:Resources.genderSelectFemale}"
+                        Checked="TournamentTypeCheckBox_Checked"
+                        />
+                </StackPanel>
+            </GroupBox.Content>
+        </GroupBox>
+
+        <GroupBox 
+            Grid.Column="1" 
+            Grid.Row="0"
+            x:Name="GbLanguage"
+            Header="{x:Static properties:Resources.language}"
+            Margin="10">
+            <GroupBox.Content>
+                <StackPanel 
+                    x:Name="PnlLanguage"
+                    Margin="0 15 0 0">
+                    <CheckBox
+                        Name="ChkEnglish"
+                        Margin="5"
+                        Tag="EN"
+                        Content="{x:Static properties:Resources.languageSelectEnglish}"
+                        Checked="LanguageCheckBox_Checked"
+                        />
+                    <CheckBox 
+                        Name="ChkCroatian"
+                        Margin="5"
+                        Tag="HR"
+                        Content="{x:Static properties:Resources.languageSelectCroatian}"
+                        Checked="LanguageCheckBox_Checked"
+                        />
+                </StackPanel>
+            </GroupBox.Content>
+        </GroupBox>
+
+        <GroupBox 
+            Grid.Column="2" 
+            Grid.Row="0"
+            x:Name="GbAppSize"
+            Header="{x:Static properties:Resources.appSize}"
+            Margin="10">
+            <GroupBox.Content>
+                <StackPanel 
+                    x:Name="PnlAppSize">
+                    <CheckBox 
+                        Name="ChkSmall"
+                        Margin="5"
+                        Tag="small"
+                        Checked="AppSizeCheckBox_Checked"
+                        />
+                    <CheckBox 
+                        Name="ChkMedium"
+                        Margin="5"
+                        Tag="medium"
+                        Checked="AppSizeCheckBox_Checked"
+                       />
+                    <CheckBox
+                        Name ="ChkLarge"
+                        Margin="5"
+                        Tag = "large"
+                        Checked="AppSizeCheckBox_Checked"
+                    />
+                    <CheckBox 
+                        Name="ChkFullScreen"
+                        Margin="5"
+                        Tag="fullscreen"
+                        Checked="AppSizeCheckBox_Checked"
+                       />
+                </StackPanel>
+            </GroupBox.Content>
+        </GroupBox>
+
+        <Button 
+            x:Name="BtnSettingsSave"
+            Grid.Column="1"
+            Grid.Row="2" 
+            Margin="20 0 20 40"
+            Click="BtnSettingsSave_OnClick"
+            Content="{x:Static properties:Resources.btnSaveSettings}"/>
+    </Grid>
+</Window>
+
+

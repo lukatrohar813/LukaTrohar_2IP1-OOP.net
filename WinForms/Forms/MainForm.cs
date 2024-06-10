@@ -6,7 +6,6 @@ using DAL.Repos;
 using DAL.Utilities;
 using Newtonsoft.Json;
 using System.Windows.Forms;
-using Newtonsoft.Json.Serialization;
 using WinForms.Controls;
 using WinForms.HelperClasses;
 
@@ -18,6 +17,7 @@ namespace WinForms.Forms
 
         private readonly IFileRepository _repository;
         private readonly IApi _api;
+        private bool _formFirstTimeShown = true;
         private readonly IDictionary<string, int> _goals = new Dictionary<string, int>();
         private readonly IDictionary<string, int> _yellowCards = new Dictionary<string, int>();
         private readonly IList<Control> _draggables = new List<Control>();
@@ -26,9 +26,6 @@ namespace WinForms.Forms
         private IList<Match>? _matches;
         private readonly IList<string> _favoritePlayerNames = new List<string>();
         private const int MaxFavoritePlayers = 3;
-        private FlowLayoutPanel departedFrom;
-        private FlowLayoutPanel goingTo;
-        private bool dndSuccessful;
 
         public enum MenuType
         {
@@ -42,20 +39,41 @@ namespace WinForms.Forms
             _api = api;
             InitializeCulture();
             InitializeComponent();
+            LoadAsync();
+        }
+
+        private async void LoadAsync()
+        {
+            await SafeExecute(InitializeForm);
+        }
+
+        private async Task InitializeForm()
+        {
             InitializeDragAndDrop();
-            InitializeAsync();
+            await LoadTeamDataAsync();
             SetMenuItemStates();
-        }
-
-        private async void InitializeAsync()
-        {
-            await SafeExecuteAsync(InitializeMainForm);
-        }
-
-        private async Task InitializeMainForm()
-        {
-            await FetchAndDisplayTeamDataAsync();
             FormClosing += MainForm_FormClosing;
+        }
+
+        private async Task LoadTeamDataAsync()
+        {
+            var selectedTeam = _repository.GetSelectedTeam();
+            if (selectedTeam != null)
+            {
+                await LoadPanelWithPlayersAsync(selectedTeam);
+            }
+
+            await LoadTeamsIntoComboBoxAsync();
+        }
+
+        private void InitializeDragAndDrop()
+        {
+            flpAllPlayers.AllowDrop = true;
+            flpFavoritePlayers.AllowDrop = true;
+            flpAllPlayers.DragDrop += flpAllPlayers_DragDrop;
+            flpAllPlayers.DragEnter += flpAllPlayers_DragEnter;
+            flpFavoritePlayers.DragEnter += flpFavoritePlayers_DragEnter;
+            flpFavoritePlayers.DragDrop += flpFavoritePlayers_DragDrop;
         }
 
         private void InitializeCulture()
@@ -64,34 +82,96 @@ namespace WinForms.Forms
             CultureSetter.SetFormCulture(language, GetType(), Controls);
         }
 
-        private void InitializeDragAndDrop()
-        {
-            flpAllPlayers.AllowDrop = true;
-            flpFavoritePlayers.AllowDrop = true;
-
-
-        }
+        private void MakeControlsDraggable(IEnumerable<Control> controls) =>
+            controls.ToList().ForEach(c => c.DoDragDrop(c.Name, DragDropEffects.Move));
 
         #endregion
 
-        #region MainForm Event Handlers
+        #region Event Handlers
 
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        private void flpFavoritePlayers_DragDrop(object sender, DragEventArgs e)
         {
-            CloseConfirmation.ConfirmFormClose(e);
+            if (flpFavoritePlayers.Controls.Count >= MaxFavoritePlayers) return;
+
+            var controlName = e.Data!.GetData(typeof(string)) as string;
+            var userControl = Controls.Find(controlName, true).FirstOrDefault();
+
+            if (userControl != null && ((PlayerUserControl)userControl).IsSelected)
+            {
+                MoveControlToPanel(userControl, (FlowLayoutPanel)sender);
+                ((PlayerUserControl)userControl).FavoriteVisible = true;
+            }
+
+            SaveFavoritePlayers();
         }
 
-        private async void cbTeamSelection_SelectedIndexChanged(object? sender, EventArgs e)
+        private void flpAllPlayers_DragDrop(object sender, DragEventArgs e)
         {
-            if (MessageBox.Show(Resources.Resources.teamSelectionBody, Resources.Resources.teamSelectionTitle,
-                    MessageBoxButtons.OKCancel) == DialogResult.OK)
+            var controlName = e.Data!.GetData(typeof(string)) as string;
+            var userControl = Controls.Find(controlName, true).FirstOrDefault();
+
+            if (userControl != null && ((PlayerUserControl)userControl).FavoriteVisible)
             {
-                _repository.SaveSelectedTeam(cbTeamSelection.SelectedItem?.ToString());
-                await SafeExecuteAsync(async () =>
+                MoveControlToPanel(userControl, (FlowLayoutPanel)sender);
+                ((PlayerUserControl)userControl).FavoriteVisible = false;
+            }
+
+            SaveFavoritePlayers();
+        }
+
+        private void MoveControlToPanel(Control control, FlowLayoutPanel panel)
+        {
+            control.Parent.Controls.Remove(control);
+            panel.Controls.Add(control);
+            ((PlayerUserControl)control).IsSelected = false;
+        }
+
+        private void flpAllPlayers_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = CanMoveToPanel(e, false) ? DragDropEffects.Move : DragDropEffects.None;
+        }
+
+        private void flpFavoritePlayers_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = CanMoveToPanel(e, true) ? DragDropEffects.Move : DragDropEffects.None;
+        }
+
+        private bool CanMoveToPanel(DragEventArgs e, bool isFavoritePanel)
+        {
+            var controlName = e.Data.GetData(typeof(string)) as string;
+            var userControl = Controls.Find(controlName, true).FirstOrDefault();
+            return userControl != null && ((PlayerUserControl)userControl).FavoriteVisible == isFavoritePanel;
+        }
+
+        private void PlayerUserControl_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (sender is PlayerUserControl puc)
+            {
+                var control = (Control)sender;
+                switch (e.Button)
                 {
-                    await LoadPanelWithPlayersAsync(_repository.GetSelectedTeam());
-                    await LoadTeamsIntoComboBoxAsync();
-                });
+                    case MouseButtons.Left:
+                        puc.IsSelected = true;
+                        _draggables.Add(control);
+                        MakeControlsDraggable(_draggables);
+                        break;
+                    case MouseButtons.Middle:
+                        puc.IsSelected = false;
+                        _draggables.Remove(control);
+                        break;
+                    case MouseButtons.Right:
+                        ShowContextMenu(puc, e.Location);
+                        break;
+                }
+            }
+        }
+
+        private async void Players_Load(object sender, EventArgs e)
+        {
+            if (_formFirstTimeShown)
+            {
+                await LoadPanelWithPlayersAsync(_repository.GetSelectedTeam());
+                _formFirstTimeShown = false;
             }
         }
 
@@ -110,87 +190,44 @@ namespace WinForms.Forms
             DisplayPlayerStatistics(_yellowCards, Resources.Resources.rankingsCards, Resources.Resources.cards);
         }
 
-        #endregion
-
-        #region Control Movement
-
-        private void PlayerUserControl_MouseDown(object sender, MouseEventArgs e)
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (sender is PlayerUserControl playerControl)
-            {
-                // Ensure selection logic is handled first
-                HandleSelection(playerControl, e);
+            CloseConfirmation.ConfirmFormClose(e);
+        }
 
-                // Only initiate drag-and-drop if it's a left mouse button click
-                if (e.Button == MouseButtons.Left)
+        private async void cbTeamSelection_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            if (MessageBox.Show(Resources.Resources.teamSelectionBody, Resources.Resources.teamSelectionTitle,
+                    MessageBoxButtons.OKCancel) == DialogResult.OK)
+            {
+                _repository.SaveSelectedTeam(cbTeamSelection.SelectedItem?.ToString());
+                await SafeExecute(async () =>
                 {
-                    StartDragDrop(playerControl);
-                }
+                    await LoadPanelWithPlayersAsync(_repository.GetSelectedTeam());
+                    await LoadTeamsIntoComboBoxAsync();
+                });
             }
         }
 
-        private void HandleSelection(PlayerUserControl playerControl, MouseEventArgs e)
+        private void SetMenuItemStates()
         {
-            switch (e.Button)
-            {
-                case MouseButtons.Left:
-                    // Toggle selection state with a slight delay to avoid conflict with drag-and-drop
-                    Task.Delay(100).ContinueWith(_ => playerControl.Invoke(new Action(() =>
-                    {
-                        playerControl.IsSelected = !playerControl.IsSelected;
-                    })));
-                    break;
-                case MouseButtons.Middle:
-                    playerControl.IsSelected = false;
-                    break;
-                case MouseButtons.Right:
-                    ShowContextMenu(playerControl, e.Location);
-                    break;
-            }
+            tsmiCroatian.Enabled = _repository.GetLanguage() != Resources.Resources.Croatian;
+            tsmiEnglish.Enabled = _repository.GetLanguage() != Resources.Resources.English;
+            tsmiMale.Enabled = _repository.GetTeamGender() != Resources.Resources.typeMale;
+            tsmiFemale.Enabled = _repository.GetTeamGender() != Resources.Resources.typeFemale;
         }
 
-        private void StartDragDrop(PlayerUserControl playerControl)
-        {
-            departedFrom = playerControl.Parent as FlowLayoutPanel;
-            playerControl.DoDragDrop(playerControl, DragDropEffects.Move);
-        }
+        private void tsmiEnglish_Click(object sender, EventArgs e) =>
+            ChangeLanguage(Resources.Resources.languageChangeBody, Resources.Resources.languageChangeTittle, "en");
 
-        private void FlowLayoutPanel_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(typeof(PlayerUserControl)))
-            {
-                e.Effect = DragDropEffects.Move;
-            }
-        }
+        private void tsmiCroatian_Click(object sender, EventArgs e) =>
+            ChangeLanguage(Resources.Resources.languageChangeBody, Resources.Resources.languageChangeTittle, "hr");
 
-        private void FlowLayoutPanel_DragOver(object sender, DragEventArgs e)
-        {
-            e.Effect = DragDropEffects.Move;
-        }
+        private void tsmiFemale_Click(object sender, EventArgs e) => ChangeType(Resources.Resources.typeChangeBody,
+            Resources.Resources.typeChangeTitle, "Female", _repository.GetLanguage());
 
-        private void FlowLayoutPanel_DragDrop(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(typeof(PlayerUserControl)))
-            {
-                var control = (PlayerUserControl)e.Data.GetData(typeof(PlayerUserControl));
-                var targetPanel = sender as FlowLayoutPanel;
-
-                if (departedFrom != targetPanel)
-                {
-                    if (targetPanel == flpFavoritePlayers && flpFavoritePlayers.Controls.Count >= MaxFavoritePlayers)
-                    {
-                        return;
-                    }
-
-                    dndSuccessful = true;
-                    control.Parent.Controls.Remove(control);
-                    targetPanel.Controls.Add(control);
-                    control.FavoriteVisible = (targetPanel == flpFavoritePlayers);
-                    SaveFavoritePlayers();
-                }
-            }
-        }
-
+        private void tsmiMale_Click(object sender, EventArgs e) => ChangeType(Resources.Resources.typeChangeBody,
+            Resources.Resources.typeChangeTitle, "Male", _repository.GetLanguage());
 
         #endregion
 
@@ -268,7 +305,7 @@ namespace WinForms.Forms
             }
             catch
             {
-                MessageBox.Show(Resources.Resources.Error);
+                MessageBox.Show("Selected Team File does not exist");
             }
         }
 
@@ -276,7 +313,7 @@ namespace WinForms.Forms
 
         #region Player Panel Methods
 
-        private void DisplayPlayersPanel(List<StartingEleven> players)
+        private void AddPlayersToPanel(List<StartingEleven> players)
         {
             players?.ForEach(p =>
             {
@@ -290,22 +327,16 @@ namespace WinForms.Forms
                     FavoriteVisible = false
                 };
 
-                LoadPreviouslySelectedPicture(playerUserControl);
+                LoadPictureIfPreviouslySelected(playerUserControl);
                 flpAllPlayers.Controls.Add(playerUserControl);
-
-                // Subscribe to the MouseDown event here
                 playerUserControl.MouseDown += PlayerUserControl_MouseDown;
-                playerUserControl.AllowDrop = true;
-            });
 
-            foreach (PlayerUserControl control in flpFavoritePlayers.Controls)
-            {
-                // Subscribe to the MouseDown event for favorite players as well
-                control.MouseDown += PlayerUserControl_MouseDown;
-            }
+                _goals[p.Name] = 0;
+                _yellowCards[p.Name] = 0;
+            });
         }
 
-        private void LoadPreviouslySelectedPicture(PlayerUserControl control)
+        private void LoadPictureIfPreviouslySelected(PlayerUserControl control)
         {
             if (_repository.DoesPictureExist(control.Name))
             {
@@ -315,7 +346,7 @@ namespace WinForms.Forms
 
         private void LoadPicture(PlayerUserControl playerUserControl)
         {
-            _openFileDialog.Filter = Resources.Resources.Imagesfilter;
+            _openFileDialog.Filter = "Image Files (*.bmp;*.jpg;*.jpeg;*.png)|*.bmp;*.jpg;*.jpeg;*.png";
             _openFileDialog.Title = Resources.Resources._openFileDialog_Title;
             if (_openFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -331,21 +362,20 @@ namespace WinForms.Forms
 
         private async Task LoadMatchesAsync()
         {
-            await SafeExecuteAsync(async () =>
+            await SafeExecute(async () =>
             {
                 this.Cursor = Cursors.WaitCursor;
                 var teamGender = _repository.GetTeamGender();
                 _matches = await _api.GetData<IList<Match>>(EndpointBuilder.GetMatchesEndpoint(teamGender));
-             
             });
         }
 
         private async Task LoadPanelWithPlayersAsync(dynamic team)
         {
-            await SafeExecuteAsync(async () =>
+            await SafeExecute(async () =>
             {
                 this.Cursor = Cursors.WaitCursor;
-                ClearAllData();
+                ClearData();
                 await LoadMatchesAsync();
 
                 var country = team is Team t ? t.Country : team as string;
@@ -353,13 +383,13 @@ namespace WinForms.Forms
                 var players = match?.HomeTeamStatistics.StartingEleven.Union(match.HomeTeamStatistics.Substitutes)
                     .ToList();
 
-                DisplayPlayersPanel(players);
-                UpdatePlayerStats(match);
+                AddPlayersToPanel(players);
+                UpdateGoalsAndYellowCards(match);
                 LoadFavoritePlayers();
             });
         }
 
-        private void UpdatePlayerStats(Match match)
+        private void UpdateGoalsAndYellowCards(Match match)
         {
             _matches?
                 .Where(m => m.HomeTeamCountry == match?.HomeTeamCountry)
@@ -379,7 +409,7 @@ namespace WinForms.Forms
                 }));
         }
 
-        private void ClearAllData()
+        private void ClearData()
         {
             _goals.Clear();
             _yellowCards.Clear();
@@ -391,7 +421,7 @@ namespace WinForms.Forms
 
         #region Statistics Methods
 
-        private void ConfigureStatisticsDisplayForm(string title, List<Control> controls)
+        private void SetupStatisticsDisplayForm(string title, List<Control> controls)
         {
             _statisticsDisplayForm.flpDisplayForm.Controls.Clear();
             _statisticsDisplayForm.Text = title;
@@ -415,10 +445,9 @@ namespace WinForms.Forms
                         CustomText = customText,
                         FavoriteVisible = _favoritePlayerNames.Contains(kvp.Key),
                         Name = kvp.Key
-
                     };
 
-                    LoadPreviouslySelectedPicture(playerUserControl);
+                    LoadPictureIfPreviouslySelected(playerUserControl);
                     return playerUserControl as Control;
                 })
                 .ToList();
@@ -447,14 +476,14 @@ namespace WinForms.Forms
                 m.HomeTeamCountry == match?.HomeTeamCountry || m.AwayTeamCountry == match?.HomeTeamCountry).ToList();
 
             var controls = CreateMatchUserControls(matches);
-            ConfigureStatisticsDisplayForm(Resources.Resources.Attendance, controls);
+            SetupStatisticsDisplayForm(Resources.Resources.Attendance, controls);
         }
 
         private void DisplayPlayerStatistics(IDictionary<string, int> playerData, string title, string customText)
         {
             LoadFavoritePlayers();
             var controls = CreatePlayerUserControls(playerData, customText);
-            ConfigureStatisticsDisplayForm(title, controls);
+            SetupStatisticsDisplayForm(title, controls);
         }
 
         #endregion
@@ -463,7 +492,7 @@ namespace WinForms.Forms
 
         private async Task LoadTeamsIntoComboBoxAsync()
         {
-            await SafeExecuteAsync(async () =>
+            await SafeExecute(async () =>
             {
                 cbTeamSelection.Items.Clear();
                 this.Cursor = Cursors.WaitCursor;
@@ -478,26 +507,6 @@ namespace WinForms.Forms
         #endregion
 
         #region Settings Methods
-
-        private void SetMenuItemStates()
-        {
-            tsmiCroatian.Enabled = _repository.GetLanguage() != Resources.Resources.Croatian;
-            tsmiEnglish.Enabled = _repository.GetLanguage() != Resources.Resources.English;
-            tsmiMale.Enabled = _repository.GetTeamGender() != Resources.Resources.typeMale;
-            tsmiFemale.Enabled = _repository.GetTeamGender() != Resources.Resources.typeFemale;
-        }
-
-        private void tsmiEnglish_Click(object sender, EventArgs e) =>
-            ChangeLanguage(Resources.Resources.languageChangeBody, Resources.Resources.languageChangeTittle, "en");
-
-        private void tsmiCroatian_Click(object sender, EventArgs e) =>
-            ChangeLanguage(Resources.Resources.languageChangeBody, Resources.Resources.languageChangeTittle, "hr");
-
-        private void tsmiFemale_Click(object sender, EventArgs e) => ChangeType(Resources.Resources.typeChangeBody,
-            Resources.Resources.typeChangeTitle, "Female", _repository.GetLanguage());
-
-        private void tsmiMale_Click(object sender, EventArgs e) => ChangeType(Resources.Resources.typeChangeBody,
-            Resources.Resources.typeChangeTitle, "Male", _repository.GetLanguage());
 
         private void ChangeType(string confirmationMessage, string title, string typeValue, string languageValue)
         {
@@ -517,41 +526,29 @@ namespace WinForms.Forms
             initialForm.ShowDialog();
         }
 
-        private async Task FetchAndDisplayTeamDataAsync()
-        {
-            var selectedTeam = _repository.GetSelectedTeam();
-            if (selectedTeam != null)
-            {
-                await LoadPanelWithPlayersAsync(selectedTeam);
-            }
-
-            await LoadTeamsIntoComboBoxAsync();
-        }
-
         private async void ChangeLanguage(string confirmationMessage, string title, string cultureCode)
         {
             if (MessageBox.Show(confirmationMessage, title, MessageBoxButtons.OKCancel) == DialogResult.OK)
             {
                 _repository.SaveSettings(_repository.GetTeamGender(), cultureCode);
                 CultureSetter.SetFormCulture(cultureCode, typeof(MainForm), Controls);
-                await ReloadMainForm();
+                await ReloadForm();
             }
         }
 
-        private async Task ReloadMainForm()
+        private async Task ReloadForm()
         {
             FormClosing -= MainForm_FormClosing;
             Controls.Clear();
             InitializeComponent();
-            await InitializeMainForm();
-            SetMenuItemStates();
+            await InitializeForm();
         }
 
         #endregion
 
-        #region Safe Execution
+        #region Helper Methods
 
-        private async Task SafeExecuteAsync(Func<Task> action)
+        private async Task SafeExecute(Func<Task> action)
         {
             try
             {
@@ -559,16 +556,14 @@ namespace WinForms.Forms
             }
             catch (Exception ex)
             {
-              
+                MessageBox.Show(ex.Message);
             }
             finally
             {
                 this.Cursor = Cursors.Default;
             }
         }
-
-        #endregion
-
-
     }
 }
+
+#endregion

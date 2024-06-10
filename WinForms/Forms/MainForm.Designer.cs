@@ -58,18 +58,16 @@ namespace WinForms.Forms
             flpFavoritePlayers.BorderStyle = BorderStyle.FixedSingle;
             resources.ApplyResources(flpFavoritePlayers, "flpFavoritePlayers");
             flpFavoritePlayers.Name = "flpFavoritePlayers";
-            flpFavoritePlayers.DragDrop += FlowLayoutPanel_DragEnter;
-            flpFavoritePlayers.DragEnter += FlowLayoutPanel_DragDrop;
-            flpFavoritePlayers.DragOver += FlowLayoutPanel_DragOver;
+            flpFavoritePlayers.DragDrop += flpFavoritePlayers_DragDrop;
+            flpFavoritePlayers.DragEnter += flpFavoritePlayers_DragEnter;
             // 
             // flpAllPlayers
             // 
             resources.ApplyResources(flpAllPlayers, "flpAllPlayers");
             flpAllPlayers.BorderStyle = BorderStyle.FixedSingle;
             flpAllPlayers.Name = "flpAllPlayers";
-            flpAllPlayers.DragDrop += FlowLayoutPanel_DragEnter;
-            flpAllPlayers.DragEnter += FlowLayoutPanel_DragDrop;
-            flpAllPlayers.DragOver += FlowLayoutPanel_DragOver;
+            flpAllPlayers.DragDrop += flpAllPlayers_DragDrop;
+            flpAllPlayers.DragEnter += flpAllPlayers_DragEnter;
             // 
             // msMenubar
             // 
